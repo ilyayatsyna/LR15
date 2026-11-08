@@ -1,119 +1,83 @@
 package org.example;
 
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Main {
-
     public static void main(String[] args) {
+        System.out.println("Hello, Илья");
         Scanner sc = new Scanner(System.in);
-
         while (true) {
-            System.out.println("\n--- Меню ---");
-            System.out.println("1 - Символы в столбик");
-            System.out.println("2 - Логин из email");
-            System.out.println("3 - Отчет по зарплатам");
-            System.out.println("4 - Регулярка (четные цифры)");
+            System.out.println("\n Меню ");
+            System.out.println("1 - Задание 1 (Билет)");
+            System.out.println("2 - Задание 2 (Горы)");
+            System.out.println("3 - Задание 3 (Книги)");
             System.out.println("0 - Выход");
-            System.out.print("Выберите задание: ");
-
+            System.out.print("Введите номер: ");
             int choice = sc.nextInt();
-            sc.nextLine();
-
-            if (choice == 0) {
-                System.out.println("Завершение работы.");
-                break;
-            }
-
             switch (choice) {
                 case 1:
-                    task1(sc);
+                    System.out.println("\n--- Задание 1 ---");
+                    Ticket t = new Ticket("Кино", 15, 25.0);
+                    System.out.print("До скидки: ");
+                    t.show();
+
+                    t.applyDiscount(10);
+                    System.out.print("После скидки: ");
+                    t.show();
                     break;
+
                 case 2:
-                    task2(sc);
+                    System.out.println("\n--- Задание 2 ---");
+                    Mountain[] mountains = new Mountain[6];
+                    mountains[0] = new Mountain("Эверест", 8848, "Непал");
+                    mountains[1] = new Mountain("К2", 8611, "Пакистан");
+                    mountains[2] = new Mountain("Канченджанга", 8586, "Индия");
+                    mountains[3] = new Mountain("Эльбрус", 5642, "Россия");
+                    mountains[4] = new Mountain("Монблан", 4810, "Франция");
+                    mountains[5] = new Mountain("Казбек", 5033, "Грузия");
+
+                    Mountain max = mountains[0];
+                    double sum = 0;
+
+                    for (int i = 0; i < mountains.length; i++) {
+                        sum += mountains[i].height;
+                        if (mountains[i].height > max.height) {
+                            max = mountains[i];
+                        }
+                    }
+
+                    double avg = sum / mountains.length;
+
+                    System.out.println("Самая высокая гора: " + max.name + " (" + max.height + " м, " + max.country + ")");
+                    System.out.println("Средняя высота: " + avg + " м");
                     break;
+
                 case 3:
-                    task3();
+                    System.out.println("\n--- Задание 3 ---");
+                    Book[] books = new Book[5];
+                    books[0] = new Book("Мастер и Маргарита", Language.RUSSIAN);
+                    books[1] = new Book("1984", Language.ENGLISH);
+                    books[2] = new Book("Гарри Поттер", Language.ENGLISH);
+                    books[3] = new Book("Фауст", Language.GERMAN);
+                    books[4] = new Book("Маленький принц", Language.FRENCH);
+
+                    System.out.println("Книги на английском языке:");
+                    for (int i = 0; i < books.length; i++) {
+                        if (books[i].language == Language.ENGLISH) {
+                            System.out.println("- " + books[i].title);
+                        }
+                    }
                     break;
-                case 4:
-                    task4();
-                    break;
+
+                case 0:
+                    System.out.println("Завершение работы.");
+                    sc.close();
+                    return;
+
                 default:
-                    System.out.println("Нет такого пункта!");
+                    System.out.println("Неверный ввод, попробуйте еще раз.");
+                    break;
             }
         }
-
-        sc.close();
-    }
-
-    public static void task1(Scanner sc) {
-        System.out.print("Введите любую строку: ");
-        String str = sc.nextLine();
-
-        System.out.println("Результат:");
-        for (int i = 0; i < str.length(); i++) {
-            System.out.println(str.charAt(i));
-        }
-    }
-
-    public static void task2(Scanner sc) {
-        System.out.print("Введите email: ");
-        String email = sc.nextLine();
-
-        int index = email.indexOf('@');
-        if (index != -1) {
-            String login = email.substring(0, index);
-            System.out.println("Логин: " + login);
-        } else {
-            System.out.println("Это не email (нет символа @)");
-        }
-    }
-
-    public static void task3() {
-        Employee[] list = new Employee[4];
-        list[0] = new Employee("Иванов И.И.", 1520.5);
-        list[1] = new Employee("Петров П.П.", 890.0);
-        list[2] = new Employee("Сидорова А.С.", 2450.75);
-        list[3] = new Employee("Кузнецов Д.В.", 1100.2);
-
-        Report.generateReport(list);
-    }
-
-    public static void task4() {
-        String text = "a1a a12a a123a a1234a a12345a a123456a";
-        System.out.println("Строка: " + text);
-
-        Pattern p = Pattern.compile("a\\d{1,3}a");
-        Matcher m = p.matcher(text);
-
-        System.out.println("Найденные совпадения:");
-        while (m.find()) {
-            System.out.println(m.group());
-        }
-    }
-}
-
-class Employee {
-    String fullname;
-    double salary;
-
-    public Employee(String fullname, double salary) {
-        this.fullname = fullname;
-        this.salary = salary;
-    }
-}
-
-class Report {
-    public static void generateReport(Employee[] employees) {
-        System.out.println("----------------------------------------");
-        System.out.printf("%-15s | %10s%n", "ФИО", "Оклад");
-        System.out.println("----------------------------------------");
-
-        for (int i = 0; i < employees.length; i++) {
-            System.out.printf("%-15s | %10.2f%n", employees[i].fullname, employees[i].salary);
-        }
-
-        System.out.println("----------------------------------------");
     }
 }
