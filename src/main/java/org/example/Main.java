@@ -1,116 +1,119 @@
 package org.example;
 
-import java.util.Arrays;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner sc = new Scanner(System.in);
 
-        System.out.println("Лабораторная работа №2");
-        System.out.println("1 - Поиск элементов с повторением цифры первого элемента 2 раза");
-        System.out.println("2 - Элементы двумерного массива, равные сумме своих индексов");
-        System.out.print("Выберите номер задания (1 или 2): ");
+        while (true) {
+            System.out.println("\n--- Меню ---");
+            System.out.println("1 - Символы в столбик");
+            System.out.println("2 - Логин из email");
+            System.out.println("3 - Отчет по зарплатам");
+            System.out.println("4 - Регулярка (четные цифры)");
+            System.out.println("0 - Выход");
+            System.out.print("Выберите задание: ");
 
-        int choice = scanner.nextInt();
+            int choice = sc.nextInt();
+            sc.nextLine();
 
-        switch (choice) {
-            case 1:
-                runTask1(scanner);
+            if (choice == 0) {
+                System.out.println("Завершение работы.");
                 break;
-            case 2:
-                runTask2();
-                break;
-            default:
-                System.out.println("Ошибка: выбрано несуществующее задание.");
-                break;
+            }
+
+            switch (choice) {
+                case 1:
+                    task1(sc);
+                    break;
+                case 2:
+                    task2(sc);
+                    break;
+                case 3:
+                    task3();
+                    break;
+                case 4:
+                    task4();
+                    break;
+                default:
+                    System.out.println("Нет такого пункта!");
+            }
         }
 
-        scanner.close();
+        sc.close();
     }
 
-    private static void runTask1(Scanner scanner) {
-        System.out.println("\nЗадание 1");
+    public static void task1(Scanner sc) {
+        System.out.print("Введите любую строку: ");
+        String str = sc.nextLine();
 
-        int[] array = new int[5];
-        System.out.println("Введите 5 элементов:");
-        for (int i = 0; i < array.length; i++) {
-            array[i] = scanner.nextInt();
+        System.out.println("Результат:");
+        for (int i = 0; i < str.length(); i++) {
+            System.out.println(str.charAt(i));
         }
-
-        System.out.println("Исходный массив: " + Arrays.toString(array));
-
-        int firstElement = array[0];
-        int targetDigit = Math.abs(firstElement) % 10;
-        System.out.println("Первый элемент: " + firstElement + ", его последняя цифра: " + targetDigit);
-
-        System.out.print("Индексы элементов, содержащих цифру " + targetDigit + " ровно 2 раза: ");
-        boolean found = false;
-
-        for (int i = 0; i < array.length; i++) {
-            int count = countDigitOccurrences(array[i], targetDigit);
-            if (count == 2) {
-                System.out.print(i + " (значение: " + array[i] + ") ");
-                found = true;
-            }
-        }
-
-        if (!found) {
-            System.out.print("таких элементов нет.");
-        }
-        System.out.println();
     }
 
-    private static int countDigitOccurrences(int number, int digit) {
-        int count = 0;
-        long n = Math.abs((long) number);
+    public static void task2(Scanner sc) {
+        System.out.print("Введите email: ");
+        String email = sc.nextLine();
 
-        if (n == 0 && digit == 0) {
-            return 1;
+        int index = email.indexOf('@');
+        if (index != -1) {
+            String login = email.substring(0, index);
+            System.out.println("Логин: " + login);
+        } else {
+            System.out.println("Это не email (нет символа @)");
         }
-
-        while (n > 0) {
-            if (n % 10 == digit) {
-                count++;
-            }
-            n /= 10;
-        }
-
-        return count;
     }
 
-    private static void runTask2() {
-        System.out.println("\nЗадание 2");
+    public static void task3() {
+        Employee[] list = new Employee[4];
+        list[0] = new Employee("Иванов И.И.", 1520.5);
+        list[1] = new Employee("Петров П.П.", 890.0);
+        list[2] = new Employee("Сидорова А.С.", 2450.75);
+        list[3] = new Employee("Кузнецов Д.В.", 1100.2);
 
-        int[][] matrix = {
-                { 0,  1,  5,  7 },
-                { 3,  2,  3, 11 },
-                { 8,  9,  4,  5 }
-        };
+        Report.generateReport(list);
+    }
 
-        System.out.println("Исходная матрица:");
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                System.out.printf("%4d", matrix[i][j]);
-            }
-            System.out.println();
+    public static void task4() {
+        String text = "a1a a12a a123a a1234a a12345a a123456a";
+        System.out.println("Строка: " + text);
+
+        Pattern p = Pattern.compile("a\\d{1,3}a");
+        Matcher m = p.matcher(text);
+
+        System.out.println("Найденные совпадения:");
+        while (m.find()) {
+            System.out.println(m.group());
+        }
+    }
+}
+
+class Employee {
+    String fullname;
+    double salary;
+
+    public Employee(String fullname, double salary) {
+        this.fullname = fullname;
+        this.salary = salary;
+    }
+}
+
+class Report {
+    public static void generateReport(Employee[] employees) {
+        System.out.println("----------------------------------------");
+        System.out.printf("%-15s | %10s%n", "ФИО", "Оклад");
+        System.out.println("----------------------------------------");
+
+        for (int i = 0; i < employees.length; i++) {
+            System.out.printf("%-15s | %10.2f%n", employees[i].fullname, employees[i].salary);
         }
 
-        System.out.println("\nЭлементы, совпадающие с суммой их индексов (a[i][j] == i + j):");
-        boolean found = false;
-
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j] == (i + j)) {
-                    System.out.println("Элемент [" + i + "][" + j + "] = " + matrix[i][j] + " (сумма индексов: " + i + " + " + j + " = " + (i + j) + ")");
-                    found = true;
-                }
-            }
-        }
-
-        if (!found) {
-            System.out.println("Совпадений не найдено.");
-        }
+        System.out.println("----------------------------------------");
     }
 }
