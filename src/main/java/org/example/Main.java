@@ -1,71 +1,116 @@
 package org.example;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Выберите задание варианта 26:");
-        System.out.println("1 - Теорема Пифагора (гипотенуза)");
-        System.out.println("2 - Проверка кратности 3 или 7");
-        System.out.println("3 - Двоичное представление числа");
-        System.out.print("Ваш выбор: ");
+
+        System.out.println("Лабораторная работа №2");
+        System.out.println("1 - Поиск элементов с повторением цифры первого элемента 2 раза");
+        System.out.println("2 - Элементы двумерного массива, равные сумме своих индексов");
+        System.out.print("Выберите номер задания (1 или 2): ");
 
         int choice = scanner.nextInt();
 
         switch (choice) {
-            case 1: {
-                System.out.print("Введите катет a: ");
-                double a = scanner.nextDouble();
-                System.out.print("Введите катет b: ");
-                double b = scanner.nextDouble();
-
-                if (a <= 0 || b <= 0) {
-                    System.out.println("Катеты должны быть больше нуля.");
-                } else {
-                    double c = Math.sqrt(a * a + b * b);
-                    System.out.printf("Гипотенуза c = %.4f%n", c);
-                }
+            case 1:
+                runTask1(scanner);
                 break;
-            }
-
-            case 2: {
-                System.out.print("Введите целое число: ");
-                int number = scanner.nextInt();
-
-                if (number % 3 == 0 || number % 7 == 0) {
-                    System.out.println("Число " + number + " кратно 3 или 7.");
-                } else {
-                    System.out.println("Число " + number + " НЕ кратно ни 3, ни 7.");
-                }
+            case 2:
+                runTask2();
                 break;
-            }
-
-            case 3: {
-                System.out.print("Введите целое неотрицательное число: ");
-                int n = scanner.nextInt();
-
-                if (n < 0) {
-                    System.out.println("Число должно быть неотрицательным.");
-                } else if (n == 0) {
-                    System.out.println("Двоичное представление: 0");
-                } else {
-                    String binaryResult = "";
-                    int temp = n;
-                    while (temp > 0) {
-                        binaryResult = (temp % 2) + binaryResult;
-                        temp = temp / 2;
-                    }
-                    System.out.println("Двоичное представление: " + binaryResult);
-                }
-                break;
-            }
-
             default:
-                System.out.println("Неверный номер задания.");
+                System.out.println("Ошибка: выбрано несуществующее задание.");
                 break;
         }
 
         scanner.close();
+    }
+
+    private static void runTask1(Scanner scanner) {
+        System.out.println("\nЗадание 1");
+
+        int[] array = new int[5];
+        System.out.println("Введите 5 элементов:");
+        for (int i = 0; i < array.length; i++) {
+            array[i] = scanner.nextInt();
+        }
+
+        System.out.println("Исходный массив: " + Arrays.toString(array));
+
+        int firstElement = array[0];
+        int targetDigit = Math.abs(firstElement) % 10;
+        System.out.println("Первый элемент: " + firstElement + ", его последняя цифра: " + targetDigit);
+
+        System.out.print("Индексы элементов, содержащих цифру " + targetDigit + " ровно 2 раза: ");
+        boolean found = false;
+
+        for (int i = 0; i < array.length; i++) {
+            int count = countDigitOccurrences(array[i], targetDigit);
+            if (count == 2) {
+                System.out.print(i + " (значение: " + array[i] + ") ");
+                found = true;
+            }
+        }
+
+        if (!found) {
+            System.out.print("таких элементов нет.");
+        }
+        System.out.println();
+    }
+
+    private static int countDigitOccurrences(int number, int digit) {
+        int count = 0;
+        long n = Math.abs((long) number);
+
+        if (n == 0 && digit == 0) {
+            return 1;
+        }
+
+        while (n > 0) {
+            if (n % 10 == digit) {
+                count++;
+            }
+            n /= 10;
+        }
+
+        return count;
+    }
+
+    private static void runTask2() {
+        System.out.println("\nЗадание 2");
+
+        int[][] matrix = {
+                { 0,  1,  5,  7 },
+                { 3,  2,  3, 11 },
+                { 8,  9,  4,  5 }
+        };
+
+        System.out.println("Исходная матрица:");
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                System.out.printf("%4d", matrix[i][j]);
+            }
+            System.out.println();
+        }
+
+        System.out.println("\nЭлементы, совпадающие с суммой их индексов (a[i][j] == i + j):");
+        boolean found = false;
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] == (i + j)) {
+                    System.out.println("Элемент [" + i + "][" + j + "] = " + matrix[i][j] + " (сумма индексов: " + i + " + " + j + " = " + (i + j) + ")");
+                    found = true;
+                }
+            }
+        }
+
+        if (!found) {
+            System.out.println("Совпадений не найдено.");
+        }
     }
 }
