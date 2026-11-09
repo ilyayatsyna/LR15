@@ -2,24 +2,34 @@ package org.example;
 
 public class Main {
     public static void main(String[] args) {
-        Driveable[] cars = new Driveable[5];
+        System.out.println("1. Статический полиморфизм (Перегрузка методов)");
+        Athlete a = new Athlete("Илья", "Динамо", 10);
+        a.train();
+        a.train(2);
+        a.train("пенальти");
 
-        cars[0] = new Sedan("Toyota Camry", 90);
-        cars[1] = new Sedan("BMW 3", 110);
-        cars[2] = new Sedan("Audi A4", 100);
-        cars[3] = new Suv("Toyota Land Cruiser", 80);
-        cars[4] = new Suv("BMW X5", 120);
+        Forward f = new Forward("Криштиану", "Реал", 7, 850);
+        f.train(3, 5);
 
-        System.out.println(" Проверка работы транспорта ");
-        for (int i = 0; i < cars.length; i++) {
-            System.out.println("\nМашина #" + (i + 1) + ":");
-            cars[i].drive();
-            System.out.println("Текущая скорость: " + cars[i].getSpeed() + " км/ч");
+        Goalkeeper g = new Goalkeeper("Нойер", "Бавария", 1, 300);
+        g.train(2, true);
 
-            if (cars[i] instanceof Parkable) {
-                Parkable p = (Parkable) cars[i];
-                p.park();
-                System.out.println("Статус парковки: " + (p.isParked() ? "Припаркована" : "В движении"));
+        System.out.println("\n 2. Динамический полиморфизм (Переопределение методов) ");
+        Athlete[] squad = new Athlete[3];
+        squad[0] = new Athlete("Максим", "Минск", 15);
+        squad[1] = new Forward("Эрлинг", "Манчестер Сити", 9, 200);
+        squad[2] = new Goalkeeper("Тибо", "Реал", 1, 150);
+
+        for (int i = 0; i < squad.length; i++) {
+            System.out.println("\nИгрок #" + (i + 1) + ":");
+            squad[i].displayInfo();
+
+            if (squad[i] instanceof Forward) {
+                Forward forward = (Forward) squad[i];
+                System.out.println("Забитых голов: " + forward.getGoals());
+            } else if (squad[i] instanceof Goalkeeper) {
+                Goalkeeper keeper = (Goalkeeper) squad[i];
+                System.out.println("Сухих матчей: " + keeper.getCleanSheets());
             }
         }
     }
